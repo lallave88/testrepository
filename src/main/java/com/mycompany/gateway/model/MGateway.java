@@ -24,7 +24,7 @@ public class MGateway {
     public MGateway() {
     }
     public MGateway(Gateway g) {
-        this.serialnumber = g.getSerialnumber();
+        this.serialnumber = g.getSerialNumber();
         this.name = g.getName();
         this.IPv4address = g.getIPv4address();
         this.devices = g.getDevices();

@@ -8,7 +8,9 @@ package com.mycompany.gateway.controller;
 import com.mycompany.gateway.entity.Device;
 import com.mycompany.gateway.entity.Gateway;
 import com.mycompany.gateway.service.DeviceService;
+
 import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
  * @author lallave
  */
 @RestController
@@ -31,66 +32,57 @@ public class DeviceController {
     @Qualifier("deviceService")
     private DeviceService deviceService;
 
-    
-    
+
     @RequestMapping(value = "/devices", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<Device>> getDevices() {
-        Collection<Device> devices = deviceService.findAll();        
-        return new ResponseEntity<Collection<Device>>(devices, HttpStatus.OK);
+        Collection<Device> devices = deviceService.findAll();
+        return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/devices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Device> getDevice(@PathVariable("id") Long id) {
-        Device device = deviceService.findById(id);
-        if(device == null) {
-            return new ResponseEntity<Device>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Device>(device, HttpStatus.OK);
+        return deviceService.findById(id)
+                .map(device -> new ResponseEntity<>(device, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
-    
+
     @RequestMapping(value = "/devices", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Device> createDevice(@RequestBody Gateway gateway,@RequestBody Device device) {
-        
-        Device savedDevice = null;
-        
-        if(deviceService.Create(gateway,device)){
-            savedDevice=deviceService.findById(device.getId());
-            return new ResponseEntity<Device>(savedDevice, HttpStatus.CREATED);
-        }
-        if(savedDevice==null){
-        return new ResponseEntity<Device>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Device>(savedDevice, HttpStatus.CREATED);
-        
+    public ResponseEntity<Device> createDevice(@RequestBody Gateway gateway, @RequestBody Device device) {
+
+        deviceService.Create(gateway, device);
+        return deviceService.findById(device.getId())
+                .map(savedDevice -> new ResponseEntity<>(savedDevice, HttpStatus.CREATED))
+                .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+
     }
 
     @RequestMapping(value = "/devices/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Device> updateDevice(@PathVariable("id") Long id, @RequestBody Device device) {
-        Device updatedDevice = null;
         if (device != null && id == device.getId()) {
             deviceService.update(device);
-            updatedDevice = deviceService.findById(id);            
+            return deviceService.findById(device.getId())
+                    .map(savedDevice -> new ResponseEntity<>(savedDevice, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(updatedDevice == null) {
-            return new ResponseEntity<Device>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Device>(updatedDevice, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/devices/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Device> deleteDevice(@PathVariable("id") Long id) {
-        if(deviceService.delete(id))
-        return new ResponseEntity<Device>(HttpStatus.NO_CONTENT);
-        
-        else{
-        return new ResponseEntity<Device>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (deviceService.delete(id))
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-     @RequestMapping(value = "/devicesbygateway/{serialnumber}",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @RequestMapping(value = "/devicesbygateway/{serialnumber}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<Device>> getDevicesByGateway(@PathVariable("serialnumber") String serialnumber) {
-        Collection<Device> devices = deviceService.findBySerialnumber(serialnumber);        
-        return new ResponseEntity<Collection<Device>>(devices, HttpStatus.OK);
+        Collection<Device> devices = deviceService.findBySerialnumber(serialnumber);
+        return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
 }

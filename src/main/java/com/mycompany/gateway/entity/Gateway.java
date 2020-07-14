@@ -5,20 +5,14 @@
  */
 package com.mycompany.gateway.entity;
 
-import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Column;
-
-import java.io.Serializable;
-import javax.persistence.FetchType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
+
 /**
- *
  * @author lallave
  */
 @Entity
@@ -27,14 +21,14 @@ public class Gateway implements Serializable {
 
     @Id
     @Column(name = "serialnumber")
-    private String serialnumber;
+    private String serialNumber;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "IPv4address")
     private String IPv4address;
-    
+
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "gateway")
     private Set<Device> devices;
@@ -42,8 +36,8 @@ public class Gateway implements Serializable {
     public Gateway() {
     }
 
-    public Gateway(String serialnumber, String name, String IPv4address) {
-        this.serialnumber = serialnumber;
+    public Gateway(String serialNumber, String name, String IPv4address) {
+        this.serialNumber = serialNumber;
         this.name = name;
         this.IPv4address = IPv4address;
 
@@ -52,15 +46,15 @@ public class Gateway implements Serializable {
     /**
      * @return the serialnumber
      */
-    public String getSerialnumber() {
-        return serialnumber;
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
     /**
-     * @param serialnumber the serialnumber to set
+     * @param serialNumber the serialnumber to set
      */
-    public void setSerialnumber(String serialnumber) {
-        this.serialnumber = serialnumber;
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     /**
@@ -107,7 +101,7 @@ public class Gateway implements Serializable {
 
     @Override
     public String toString() {
-        return "Gateway [serialnumber = " + serialnumber + ", name = " + name + ", IPv4address = " + IPv4address + "]";
+        return "Gateway [serialnumber = " + serialNumber + ", name = " + name + ", IPv4address = " + IPv4address + "]";
     }
 
 }

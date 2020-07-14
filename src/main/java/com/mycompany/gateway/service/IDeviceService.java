@@ -7,18 +7,20 @@ package com.mycompany.gateway.service;
 
 import com.mycompany.gateway.entity.Device;
 import com.mycompany.gateway.entity.Gateway;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * @author lallave
  */
 public interface IDeviceService {
-     public List<Device> findAll();
+	public List<Device> findAll();
     
     public List<Device> findBySerialnumber(String serialnumber);
 
-	public Device findById(long id);
+	public Optional<Device> findById(long id);
 
 	public void update(Device d);
 	

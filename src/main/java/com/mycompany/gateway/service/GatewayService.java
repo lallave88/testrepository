@@ -6,27 +6,27 @@
 package com.mycompany.gateway.service;
 
 import com.mycompany.gateway.entity.Gateway;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.mycompany.gateway.repository.GatewayRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
- *
  * @author lallave
  */
 @Service("gatewayService")
 public class GatewayService implements IGatewayService {
 
     @Autowired(required = true)
-    @Qualifier("gatewayRepository")    
+    @Qualifier("gatewayRepository")
     GatewayRepository gatewayRepo;
 
     public GatewayService() {
     }
 
-    
+
     @Override
     public boolean create(Gateway g) {
         try {
@@ -43,26 +43,25 @@ public class GatewayService implements IGatewayService {
     }
 
     /**
-     *
      * @param serialnumber
      * @return
      */
     @Override
     public Gateway findBySerialnumber(String serialnumber) {
-        return gatewayRepo.findBySerialnumber(serialnumber);
+        return gatewayRepo.findBySerialNumber(serialnumber);
     }
 
     @Override
     public void update(Gateway g) {
-        gatewayRepo.update(g);      
+        gatewayRepo.save(g);
     }
 
     @Override
     public boolean delete(String serialnumber) {
-        Gateway gateway= findBySerialnumber(serialnumber);
-        if(gateway!=null){
-        gatewayRepo.delete(gateway);
-        return true;
+        Gateway gateway = findBySerialnumber(serialnumber);
+        if (gateway != null) {
+            gatewayRepo.delete(gateway);
+            return true;
         }
         return false;
     }
